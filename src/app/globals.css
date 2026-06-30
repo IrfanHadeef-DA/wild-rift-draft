@@ -1,0 +1,120 @@
+/* ─── Google Fonts — must precede all other rules ──────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+/* ─── CSS Custom Properties ────────────────────────────────────── */
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'Inter', system-ui, sans-serif;
+
+  /* Scrollbar */
+  --scrollbar-track: #2A2018;
+  --scrollbar-thumb: #4A3D2E;
+  --scrollbar-thumb-hover: #6B5639;
+}
+
+/* ─── Base Reset ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: #1A1410;
+  color: #F5EAD3;
+  font-family: var(--font-inter);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  min-height: 100dvh;
+}
+
+/* ─── Custom Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ─── Focus Styles ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #4F8EF7;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Selection ────────────────────────────────────────────────── */
+::selection {
+  background-color: rgba(201, 162, 39, 0.25);
+  color: #F5EAD3;
+}
+
+/* ─── Typography ───────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: #F5EAD3;
+}
+
+/* ─── Utility: Skeleton shimmer ────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #2A2018 0%,
+    #3A2D20 50%,
+    #2A2018 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ─── Utility: Gold glow for recommended pick ──────────────────── */
+.gold-glow {
+  box-shadow: 0 0 0 1px rgba(201, 162, 39, 0.5),
+              0 0 20px rgba(201, 162, 39, 0.15);
+}
+
+/* ─── Utility: Accent glow for active states ───────────────────── */
+.accent-glow {
+  box-shadow: 0 0 0 1px rgba(140, 47, 57, 0.5),
+              0 0 20px rgba(140, 47, 57, 0.15);
+}
+
+/* ─── Background grid pattern ──────────────────────────────────── */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(201,162,39,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,162,39,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Reduced motion ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
