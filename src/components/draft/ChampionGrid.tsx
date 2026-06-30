@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { getChampionImageUrl } from "@/lib/championImages";
 import type { Champion, Role } from "@/types";
 
 interface ChampionGridProps {
@@ -48,7 +49,7 @@ export function ChampionGrid({ champions, onSelect, side }: ChampionGridProps) {
   return (
     <div className={cn("rounded-xl border overflow-hidden", accentBorder, "bg-surface-1")}>
 
-      {/* Role tabs — like clicking role icons in champ select */}
+      {/* Role tabs */}
       <div className="flex border-b border-border-subtle bg-surface-0/60 px-1">
         {ROLE_TABS.map((tab) => (
           <button
@@ -56,9 +57,7 @@ export function ChampionGrid({ champions, onSelect, side }: ChampionGridProps) {
             onClick={() => setActiveRole(tab.value)}
             className={cn(
               "flex-1 flex flex-col items-center gap-1 py-2.5 transition-all duration-150 relative",
-              activeRole === tab.value
-                ? cn(accentText, "")
-                : "text-text-muted hover:text-text-secondary"
+              activeRole === tab.value ? accentText : "text-text-muted hover:text-text-secondary"
             )}
           >
             <span className="text-base leading-none">{tab.icon}</span>
@@ -70,7 +69,7 @@ export function ChampionGrid({ champions, onSelect, side }: ChampionGridProps) {
         ))}
       </div>
 
-      {/* Champion grid — portrait + name underneath, like in-game */}
+      {/* Champion grid with real portraits */}
       <div className="max-h-[420px] overflow-y-auto p-3 bg-parchment-dark/5">
         {sorted.length === 0 ? (
           <div className="py-12 text-center text-sm text-text-muted">
@@ -78,38 +77,56 @@ export function ChampionGrid({ champions, onSelect, side }: ChampionGridProps) {
           </div>
         ) : (
           <div className="grid grid-cols-4 gap-2.5 sm:grid-cols-5 md:grid-cols-6">
-            {sorted.map((c) => {
-              const colors = getInitialColor(c.name);
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => onSelect(c)}
-                  className="group flex flex-col items-center gap-1 transition-transform duration-150 hover:scale-105"
-                >
-                  <div
-                    className={cn(
-                      "h-14 w-14 rounded-lg border-2 flex items-center justify-center text-sm font-bold transition-all",
-                      "group-hover:shadow-lg",
-                      side === "ally" ? "group-hover:border-accent" : "group-hover:border-[#8C2F39]"
-                    )}
-                    style={{ backgroundColor: colors.bg, borderColor: colors.border, color: colors.text }}
-                  >
-                    {c.name.slice(0, 2).toUpperCase()}
-                  </div>
-                  <span className="text-2xs text-text-secondary group-hover:text-text-primary font-medium text-center leading-tight max-w-[60px] truncate">
-                    {c.name}
-                  </span>
-                </button>
-              );
-            })}
+            {sorted.map((c) => (
+              <ChampionTile key={c.id} champion={c} onSelect={onSelect} side={side} />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Footer count */}
       <div className={cn("px-3 py-1.5 border-t border-border-subtle text-2xs text-text-muted", accentBg)}>
         {sorted.length} champion{sorted.length !== 1 ? "s" : ""} · tap to pick
       </div>
     </div>
+  );
+}
+
+function ChampionTile({
+  champion, onSelect, side,
+}: { champion: Champion; onSelect: (c: Champion) => void; side: "ally" | "enemy" }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const colors = getInitialColor(champion.name);
+  const imageUrl = getChampionImageUrl(champion.slug);
+
+  return (
+    <button
+      onClick={() => onSelect(champion)}
+      className="group flex flex-col items-center gap-1 transition-transform duration-150 hover:scale-105"
+    >
+      <div
+        className={cn(
+          "h-14 w-14 rounded-lg border-2 overflow-hidden flex items-center justify-center text-sm font-bold transition-all",
+          "group-hover:shadow-lg",
+          side === "ally" ? "group-hover:border-accent" : "group-hover:border-[#8C2F39]"
+        )}
+        style={{ backgroundColor: colors.bg, borderColor: colors.border }}
+      >
+        {!imgFailed ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={imageUrl}
+            alt={champion.name}
+            className="h-full w-full object-cover"
+            onError={() => setImgFailed(true)}
+            loading="lazy"
+          />
+        ) : (
+          <span style={{ color: colors.text }}>{champion.name.slice(0, 2).toUpperCase()}</span>
+        )}
+      </div>
+      <span className="text-2xs text-text-secondary group-hover:text-text-primary font-medium text-center leading-tight max-w-[60px] truncate">
+        {champion.name}
+      </span>
+    </button>
   );
 }
